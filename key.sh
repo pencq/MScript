@@ -45,4 +45,6 @@ fi
 # 输出公钥
 echo "您的SSH公钥为："
 cat "$HOME/.ssh/id_rsa.pub"
+echo "您的SSH公钥为：" 
+cat "$HOME/.ssh/id_rsa.pub"
 echo "SSH 配置已完成，请使用 SSH 密钥进行连接，确保配置生效！"
