@@ -12,7 +12,12 @@ if [ -f "$HOME/.ssh/id_rsa" ]; then
   fi
   # 删除现有密钥文件
   rm "$HOME/.ssh/id_rsa" "$HOME/.ssh/id_rsa.pub"
-  echo "现有SSH密钥已删除。"
+  if [ $? -eq 0 ]; then
+    echo "现有SSH密钥已删除。"
+  else
+    echo "删除现有SSH密钥失败，请检查权限。"
+    exit 1
+  fi
 fi
 
 # 生成新的SSH Key
@@ -23,7 +28,13 @@ if [[ $answer =~ ^[Yy]$ ]]; then
 else
   ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/id_rsa" -N "" -C "$EMAIL"
 fi
-echo "SSH Key创建成功！"
+
+if [ $? -eq 0 ]; then
+  echo "SSH Key创建成功！"
+else
+  echo "创建SSH Key失败，请检查！"
+  exit 1
+fi
 
 # 提示输入新的 SSH 端口
 read -p "请输入新的 SSH 端口号 (默认: 22): " SSH_PORT
@@ -55,6 +66,12 @@ if ! sudo systemctl is-active sshd; then
 fi
 
 # 输出公钥
-echo "您的SSH公钥为："
+echo "SSH公钥为："
 cat "$HOME/.ssh/id_rsa.pub"
+
+# 输出私钥并提示安全注意事项
+echo "SSH私钥为："
+cat "$HOME/.ssh/id_rsa"
+echo "请妥善保管私钥，切勿泄露给他人！"
+
 echo "SSH 配置已完成，请使用 SSH 密钥进行连接，确保配置生效！"
