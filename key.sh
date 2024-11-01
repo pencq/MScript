@@ -3,8 +3,20 @@
 # 配置邮箱
 EMAIL="pencq@outlook.com"
 
-# 生成或覆盖SSH Key
-echo "重新创建SSH Key..."
+# 检查并删除现有SSH Key
+if [ -f "$HOME/.ssh/id_rsa" ]; then
+  read -p "SSH密钥已存在，是否覆盖？(y/n): " overwrite
+  if [[ ! $overwrite =~ ^[Yy]$ ]]; then
+    echo "保持现有SSH密钥，退出脚本。"
+    exit 0
+  fi
+  # 删除现有密钥文件
+  rm "$HOME/.ssh/id_rsa" "$HOME/.ssh/id_rsa.pub"
+  echo "现有SSH密钥已删除。"
+fi
+
+# 生成新的SSH Key
+echo "正在创建SSH Key..."
 read -p "是否设置密钥密码？(y/n): " answer
 if [[ $answer =~ ^[Yy]$ ]]; then
   ssh-keygen -t rsa -b 4096 -f "$HOME/.ssh/id_rsa" -C "$EMAIL"
@@ -44,7 +56,5 @@ fi
 
 # 输出公钥
 echo "您的SSH公钥为："
-cat "$HOME/.ssh/id_rsa.pub"
-echo "您的SSH公钥为：" 
 cat "$HOME/.ssh/id_rsa.pub"
 echo "SSH 配置已完成，请使用 SSH 密钥进行连接，确保配置生效！"
