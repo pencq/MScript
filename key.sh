@@ -49,23 +49,6 @@ if ! sudo sed -i "s/^#\?PasswordAuthentication.*/PasswordAuthentication no/g" "$
   exit 1
 fi
 
-# 检查并创建交换空间
-if [ ! -f /swapfile ]; then
-  echo "正在创建交换空间..."
-  sudo fallocate -l $SWAP_SIZE /swapfile
-  if [ $? -ne 0 ]; then
-    echo "创建交换空间失败，请检查！"
-    exit 1
-  fi
-  sudo chmod 600 /swapfile
-  sudo mkswap /swapfile
-  sudo swapon /swapfile
-  echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-  echo "交换空间创建并启用成功！"
-else
-  echo "交换空间已存在，跳过创建。"
-fi
-
 # 重启 SSH 服务
 echo "重启 SSH 服务..."
 sudo systemctl restart sshd
