@@ -31,6 +31,10 @@ fi
 
 if [ $? -eq 0 ]; then
   echo "SSH Key创建成功！"
+  # 将公钥添加到 authorized_keys 文件
+  cat "$HOME/.ssh/id_rsa.pub" >> "$HOME/.ssh/authorized_keys"
+  chmod 600 "$HOME/.ssh/authorized_keys"
+  echo "公钥已添加到 authorized_keys 文件。"
 else
   echo "创建SSH Key失败，请检查！"
   exit 1
